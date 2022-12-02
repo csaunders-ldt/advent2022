@@ -30,7 +30,9 @@ export async function solve<T = string[]>({
     : [part1, 'input.txt', 'solutions.txt', test1, 'test.txt'];
 
   if (test) {
-    const testInput = parser(readFileSync(`${dir}/${testFile}`, 'utf8'));
+    const testInput = parser(
+      readFileSync(`${dir}/${testFile}`, 'utf8').replace(/\n$/, ''),
+    );
     const testOutput = solver(testInput)?.toString();
     if (testOutput !== test) {
       console.error(
@@ -42,7 +44,7 @@ export async function solve<T = string[]>({
   }
 
   const fileName = `${dir}/${file}`;
-  const input = parser(readFileSync(fileName, 'utf8'));
+  const input = parser(readFileSync(fileName, 'utf8').replace(/\n$/, ''));
   const answer = solver(input)?.toString();
   console.log(`Attempting ${answer}`);
   const solutions = readFileSync(`${dir}/${solutionsFile}`, 'utf8').split('\n');
