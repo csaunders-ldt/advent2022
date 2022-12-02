@@ -23,9 +23,11 @@ function part1(lines: [number, number][]) {
   return sumBy(lines, ([them, you]) => getRoundScore(them, you) + you);
 }
 
+const LOSE = 1;
+const TIE = 2;
 function getTargetShape(them: number, expectedResult: number): number {
-  if (expectedResult === 2) return them;
-  if (expectedResult === 1) return ((them + 1) % 3) + 1;
+  if (expectedResult === TIE) return them;
+  if (expectedResult === LOSE) return ((them + 1) % 3) + 1;
   return (them % 3) + 1;
 }
 
