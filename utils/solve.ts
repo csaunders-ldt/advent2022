@@ -67,6 +67,8 @@ export async function solve<T = string[]>({
     console.log('Wrong answer!');
   } else {
     console.log('Correct answer!');
+    if (part === 2) return;
+
     writeFileSync(`${dir}/solutions2.txt`, '');
     fetch(`https://adventofcode.com/2022/day/${day}/input`, {
       headers: {
