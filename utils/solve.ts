@@ -7,25 +7,44 @@ config();
 type SolveArgs<T> = {
   part1: (input: T) => { toString: () => string } | undefined;
   part2: (input: T) => { toString: () => string } | undefined;
+  test1?: string;
+  test2?: string;
   parser: (input: string) => T;
 };
 
 export async function solve<T = string[]>({
   part1,
+  test1,
   part2,
+  test2,
   parser,
 }: SolveArgs<T>) {
   const dir = dirname(caller());
   const day = dir.replace(/.*day/, '');
 
   const part1Solved = existsSync(`${dir}/input2.txt`);
-  const [solver, file, solutionsFile] = part1Solved
-    ? [part2, 'input2.txt', 'solutions2.txt']
-    : [part1, 'input.txt', 'solutions.txt'];
+  const part = part1Solved ? 2 : 1;
+
+  const [solver, file, solutionsFile, test, testFile] = part1Solved
+    ? [part2, 'input2.txt', 'solutions2.txt', test2, 'test2.txt']
+    : [part1, 'input.txt', 'solutions.txt', test1, 'test.txt'];
+
+  if (test) {
+    const testInput = parser(readFileSync(`${dir}/${testFile}`, 'utf8'));
+    const testOutput = solver(testInput)?.toString();
+    if (testOutput !== test) {
+      console.error(
+        `Test failed for day ${day} part ${part}: expected ${test}, got ${testOutput}`,
+      );
+      process.exit(1);
+    }
+    console.log(`Test passed for day ${day}`);
+  }
 
   const fileName = `${dir}/${file}`;
   const input = parser(readFileSync(fileName, 'utf8'));
   const answer = solver(input)?.toString();
+  console.log(`Attempting ${answer}`);
   const solutions = readFileSync(`${dir}/${solutionsFile}`, 'utf8').split('\n');
   if (solutions.includes(answer || '')) {
     console.log('Solution already attempted!');
@@ -40,7 +59,7 @@ export async function solve<T = string[]>({
         cookie: `session=${process.env.SESSION}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: `level=1&answer=${answer}`,
+      body: `level=${part}&answer=${answer}`,
     },
   );
   const body = await result.text();
