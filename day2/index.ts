@@ -7,7 +7,6 @@ function parser(input: string): [number, number][] {
     .replace(/[BY]/g, '2')
     .replace(/[CZ]/g, '3')
     .split('\n')
-    .slice(0, -1)
     .map((l) => l.split(' ').map(Number) as [number, number]);
 }
 
