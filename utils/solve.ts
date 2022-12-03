@@ -4,21 +4,18 @@ import { dirname } from 'path';
 import caller from 'caller';
 config();
 
-type SolveArgs<T> = {
-  part1: (input: T) => { toString: () => string } | undefined;
-  part2: (input: T) => { toString: () => string } | undefined;
-  test1?: string;
-  test2?: string;
+type SolveArgs<T, TResult> = {
+  part1: (input: T) => TResult;
+  part2: (input: T) => TResult;
+  test1?: TResult;
+  test2?: TResult;
   parser: (input: string) => T;
 };
 
-export async function solve<T = string[]>({
-  part1,
-  test1,
-  part2,
-  test2,
-  parser,
-}: SolveArgs<T>) {
+export async function solve<
+  T = string[],
+  TResult = { toString: () => string } | undefined,
+>({ part1, test1, part2, test2, parser }: SolveArgs<T, TResult>) {
   const dir = dirname(caller());
   const day = dir.replace(/.*day/, '');
 
@@ -34,7 +31,7 @@ export async function solve<T = string[]>({
       readFileSync(`${dir}/${testFile}`, 'utf8').replace(/\n$/, ''),
     );
     const testOutput = solver(testInput)?.toString();
-    if (testOutput !== test) {
+    if (testOutput !== test.toString()) {
       console.error(
         `Test failed for day ${day} part ${part}: expected ${test}, got ${testOutput}`,
       );
