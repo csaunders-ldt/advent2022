@@ -26,8 +26,8 @@ function part1(rucksacks: string[]) {
 }
 
 function part2(rucksacks: string[]) {
-  return sumBy(chunk(rucksacks, 3), (rucksacks) => {
-    const commonLetter = findCommonLetter(...rucksacks);
+  return sumBy(chunk(rucksacks, 3), (rucksackGroup) => {
+    const commonLetter = findCommonLetter(...rucksackGroup);
     return getLetterScore(commonLetter);
   });
 }
