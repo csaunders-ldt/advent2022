@@ -5,6 +5,8 @@
     "outDir": "dist",
     "sourceMap": true,
 
+    "strict": false,
+
     "incremental": true,
 
     "noUnusedLocals": true,
@@ -14,7 +16,7 @@
     "noUncheckedIndexedAccess": true,
 
     "resolveJsonModule": true,
-    "allowJs": true,
+    "allowJs": true
   },
   "ts-node": {
     "files": true
