@@ -1,6 +1,5 @@
 import { chunk, map, sumBy } from 'lodash';
-import { parseLines } from '../utils/parse';
-import { solve } from '../utils/solve';
+import { parseLines, solve } from '../utils';
 
 function splitInHalf(input: string) {
   const half = Math.floor(input.length / 2);

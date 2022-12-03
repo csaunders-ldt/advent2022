@@ -1,5 +1,4 @@
-import { parseLines } from '../utils/parse';
-import { solve } from '../utils/solve';
+import { parseLines, solve } from '../utils';
 
 function part1(_input: string[]) {
   return 'part1';

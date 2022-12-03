@@ -1,6 +1,5 @@
 import { map, max, slice, sortBy, sum } from 'lodash';
-import { parseLines } from '../utils/parse';
-import { solve } from '../utils/solve';
+import { parseLines, solve } from '../utils';
 
 function sumElf(elf: string) {
   return sum(elf.split('\n').map(Number));

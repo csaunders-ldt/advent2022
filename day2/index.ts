@@ -37,4 +37,4 @@ function part2(lines: [number, number][]) {
   });
 }
 
-solve({ part1, test1: '15', part2, test2: '12', parser });
+solve({ part1, test1: 15, part2, test2: 12, parser });
