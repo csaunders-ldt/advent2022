@@ -1,4 +1,14 @@
-import { filter, forEach, join, map, reverse, split, times, zip } from 'lodash';
+import {
+  filter,
+  forEach,
+  join,
+  map,
+  range,
+  reverse,
+  split,
+  times,
+  zip,
+} from 'lodash';
 import { solve } from '../utils';
 
 type Input = {
@@ -27,28 +37,17 @@ function parser(input: string) {
 
 function part1({ columns, moves }: Input) {
   forEach(moves, ({ count, from, to }) => {
-    times(count, () => {
-      columns[to - 1].push(columns[from - 1].pop());
-    });
+    times(count, () => columns[to - 1].push(columns[from - 1].pop()));
   });
-  return join(
-    columns.map((c) => c.pop()),
-    '',
-  );
+  return columns.map((c) => c.pop()).join('');
 }
 
 function part2({ columns, moves }: Input) {
   forEach(moves, ({ count, from, to }) => {
-    const moved = [];
-    times(count, () => {
-      moved.unshift(columns[from - 1].pop());
-    });
-    columns[to - 1] = columns[to - 1].concat(moved);
+    const moved = map(range(count), () => columns[from - 1].pop());
+    columns[to - 1] = columns[to - 1].concat(reverse(moved));
   });
-  return join(
-    columns.map((c) => c.pop()),
-    '',
-  );
+  return columns.map((c) => c.pop()).join('');
 }
 
 solve({ part1, test1: 'CMZ', part2, test2: 'MCD', parser });
