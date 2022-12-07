@@ -37,7 +37,7 @@ export async function solve<
       );
       process.exit(1);
     }
-    console.log(`Test passed for day ${day}`);
+    console.log(`Test passed for day ${day} part ${part}`);
   }
 
   const fileName = `${dir}/${file}`;
