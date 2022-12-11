@@ -1,5 +1,5 @@
 import { forEach, map, reduce, reverse, sortBy, split, times } from 'lodash';
-import { parseLines, solve } from '../utils';
+import { solve } from '../utils';
 
 type Monkey = {
   items: number[];
