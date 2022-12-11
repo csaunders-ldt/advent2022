@@ -13,9 +13,7 @@ type SolveArgs<T, TResult1, TResult2> = {
 };
 
 function read(fileName: string): string {
-  return readFileSync(fileName, 'utf8')
-    .replace(/\n$/, '')
-    .replace('\r\n', '\n');
+  return readFileSync(fileName, 'utf8').replace(/\n$/, '').replace(/\r/g, '');
 }
 
 export async function solve<
