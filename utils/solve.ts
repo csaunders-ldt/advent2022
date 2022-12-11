@@ -4,22 +4,25 @@ import { dirname } from 'path';
 import caller from 'caller';
 config();
 
-type SolveArgs<T, TResult> = {
-  part1: (input: T) => TResult;
-  part2: (input: T) => TResult;
-  test1?: TResult;
-  test2?: TResult;
+type SolveArgs<T, TResult1, TResult2> = {
+  part1: (input: T) => TResult1;
+  part2: (input: T) => TResult2;
+  test1?: TResult1;
+  test2?: TResult2;
   parser: (input: string) => T;
 };
 
 function read(fileName: string): string {
-  return readFileSync(fileName, 'utf8').replace(/\n$/, '').replace('\r\n', '');
+  return readFileSync(fileName, 'utf8')
+    .replace(/\n$/, '')
+    .replace('\r\n', '\n');
 }
 
 export async function solve<
   T = string[],
-  TResult = { toString: () => string } | undefined,
->({ part1, test1, part2, test2, parser }: SolveArgs<T, TResult>) {
+  TResult1 = { toString: () => string } | undefined,
+  TResult2 = TResult1,
+>({ part1, test1, part2, test2, parser }: SolveArgs<T, TResult1, TResult2>) {
   const dir = dirname(caller());
   const day = dir.replace(/.*day/, '');
 
@@ -35,7 +38,7 @@ export async function solve<
     const testOutput = solver(testInput)?.toString();
     if (testOutput !== test.toString()) {
       console.error(
-        `Test failed for day ${day} part ${part}: expected ${test}, got ${testOutput}`,
+        `Test failed for day ${day} part ${part}:\nExpected\n${test}\nGot\n${testOutput}\n`,
       );
       process.exit(1);
     }
