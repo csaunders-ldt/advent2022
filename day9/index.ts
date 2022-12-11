@@ -1,4 +1,4 @@
-import { flatten, forEach, map, max, min, range, split } from 'lodash';
+import { flatten, forEach, map, max, min, range, repeat, split } from 'lodash';
 import { parseLines, solve } from '../utils';
 
 type Direction = 'U' | 'D' | 'L' | 'R';
@@ -53,7 +53,14 @@ function part1(input: Direction[]) {
 }
 
 function part2(input: Direction[]) {
-  return part1(input);
+  let bits = map(range(10), () => [0, 0] as Position);
+  const seen = new Set<string>();
+  forEach(input, (dir) => {
+    bits[0] = sumPositions(bits[0], moves[dir]);
+    forEach(range(9), (i) => (bits[i + 1] = getTail(bits[i], bits[i + 1])));
+    seen.add(bits[9].toString());
+  });
+  return seen.size;
 }
 
-solve({ part1, test1: 13, part2, parser });
+solve({ part1, test1: 13, part2, test2: 36, parser });
