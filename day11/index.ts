@@ -41,11 +41,6 @@ function simulateStuffSlingingSimianShenanigans({ monkeys, afterEval }: Args) {
   });
 }
 
-function getScore(monkeys: Monkey[]) {
-  const sortedMonkeys = reverse(sortBy(map(monkeys, 'inspectCount')));
-  return sortedMonkeys[0] * sortedMonkeys[1];
-}
-
 function part1(monkeys: Monkey[]) {
   const args = { monkeys, afterEval: (val: number) => val / 3 };
   times(20, () => simulateStuffSlingingSimianShenanigans(args));
