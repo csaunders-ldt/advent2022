@@ -1,5 +1,5 @@
-import { flatten, forEach, map, max, min, range, repeat, split } from 'lodash';
-import { parseLines, solve } from '../utils';
+import { flatten, forEach, map, range, split } from 'lodash';
+import { solve } from '../utils';
 
 type Direction = 'U' | 'D' | 'L' | 'R';
 type Position = [number, number];
@@ -24,20 +24,17 @@ function sumPositions(a: Position, b: Position): Position {
   return [a[0] + b[0], a[1] + b[1]];
 }
 
+function btoi(b: boolean) {
+  return b ? 1 : 0;
+}
+
 function getTail(head: Position, tail: Position): Position {
-  const diff = [head[0] - tail[0], head[1] - tail[1]];
-  const absDiff = [Math.abs(diff[0]), Math.abs(diff[1])];
-  if (absDiff[0] <= 1 && absDiff[1] <= 1) {
+  if (Math.abs(head[0] - tail[0]) < 2 && Math.abs(head[1] - tail[1]) < 2) {
     return tail;
   }
-  if (diff[0] + diff[1] === 4) {
-    return [tail[0] + diff[0] / 2, tail[1] + diff[1] / 2];
-  }
-  if (absDiff[0] === 2) {
-    return [tail[0] + diff[0] / 2, head[1]];
-  }
-
-  return [head[0], tail[1] + diff[1] / 2];
+  const x = tail[0] + btoi(head[0] > tail[0]) - btoi(head[0] < tail[0]);
+  const y = tail[1] + btoi(head[1] > tail[1]) - btoi(head[1] < tail[1]);
+  return [x, y];
 }
 
 function part1(input: Direction[]) {
