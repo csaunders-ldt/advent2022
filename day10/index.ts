@@ -29,9 +29,8 @@ function part2(instructions: string[]) {
     if (i % 40 == 39) {
       register += '\n';
     }
-    if (op === 'addx') {
-      value += +arg;
-    }
+    if (op === 'noop') return;
+    value += +arg;
   });
   process.exit(1);
   return register;
