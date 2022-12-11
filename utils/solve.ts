@@ -12,6 +12,10 @@ type SolveArgs<T, TResult> = {
   parser: (input: string) => T;
 };
 
+function read(fileName: string): string {
+  return readFileSync(fileName, 'utf8').replace(/\n$/, '').replace('\r\n', '');
+}
+
 export async function solve<
   T = string[],
   TResult = { toString: () => string } | undefined,
@@ -27,9 +31,7 @@ export async function solve<
     : [part1, 'input.txt', 'solutions.txt', test1, 'test.txt'];
 
   if (test) {
-    const testInput = parser(
-      readFileSync(`${dir}/${testFile}`, 'utf8').replace(/\n$/, ''),
-    );
+    const testInput = parser(read(`${dir}/${testFile}`));
     const testOutput = solver(testInput)?.toString();
     if (testOutput !== test.toString()) {
       console.error(
@@ -41,10 +43,10 @@ export async function solve<
   }
 
   const fileName = `${dir}/${file}`;
-  const input = parser(readFileSync(fileName, 'utf8').replace(/\n$/, ''));
+  const input = parser(read(fileName));
   const answer = solver(input)?.toString();
   console.log(`Attempting ${answer}`);
-  const solutions = readFileSync(`${dir}/${solutionsFile}`, 'utf8').split('\n');
+  const solutions = read(`${dir}/${solutionsFile}`).split('\n');
   if (solutions.includes(answer || '')) {
     console.log('Solution already attempted!');
     return;
