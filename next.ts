@@ -7,12 +7,15 @@ import {
   rmSync,
 } from 'fs';
 import { config } from 'dotenv';
+import { map, sortBy } from 'lodash';
 config();
 
 const files = readdirSync('.');
 const existingDays = files.filter((file) => file.startsWith('day'));
-const lastDay = existingDays[existingDays.length - 1] || 'day0';
-const lastDayNumber = parseInt(lastDay.replace('day', ''), 10);
+const dayNumbers = map(existingDays, (day) =>
+  parseInt(day.replace('day', ''), 10),
+);
+const lastDayNumber = sortBy(dayNumbers)[dayNumbers.length - 1] || 0;
 const day = lastDayNumber + 1;
 const folder = `day${day}`;
 
@@ -31,3 +34,6 @@ if (existsSync('./index.ts')) {
   rmSync('./index.ts');
 }
 writeFileSync('./index.ts', `import './day${day}';`);
+function sort(dayNumbers: number[]) {
+  throw new Error('Function not implemented.');
+}
