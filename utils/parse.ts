@@ -22,3 +22,5 @@ export function getGridParser<T>(opts?: GridParserOptions<T>) {
     return rows.map((row) => row.split(rowSeparator).map(mapFn));
   };
 }
+
+export const parseGrid = getGridParser();

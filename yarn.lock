@@ -80,6 +80,20 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-17.0.45.tgz#2c0fafd78705e7a18b7906b5201a522719dc5190"
   integrity sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==
 
+Set@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.npmjs.org/Set/-/Set-0.4.1.tgz#8385587be9863e49d2ffd7a85e1a1e4b11633ca6"
+  integrity sha512-+TXBAK+hDss1DqX7W5fGw0JuvGrtVwAHYGWgqe0MIWHH/U9HvBb9LsgNZ3TLZX8DaddBGRmCgoDuk7mnYgx8Dw==
+
+a-star@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.npmjs.org/a-star/-/a-star-0.2.0.tgz#a1423c830c3bf9a259d490bfbf2710e792f044f9"
+  integrity sha512-8tnUNOOneo7w5MnhQc9VuTAaVAWf+gg5j/bIm6QF77TmC40qwZPlWhKSfSCwrw1M9RUhHTn2PDX+ZtcVNRqIaw==
+  dependencies:
+    Set "^0.4.1"
+    dict "^1.4.0"
+    heap "^0.2.3"
+
 acorn-walk@^8.1.1:
   version "8.2.0"
   resolved "https://registry.npmjs.org/acorn-walk/-/acorn-walk-8.2.0.tgz#741210f2e2426454508853a2f44d0ab83b7f69c1"
@@ -303,6 +317,11 @@ delayed-stream@~1.0.0:
   resolved "https://registry.npmjs.org/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==
 
+dict@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/dict/-/dict-1.4.0.tgz#83d87d57cf0c4ac0d834608448b10a6e23bbfea0"
+  integrity sha512-iJZcYCUwg0vDqo/CSc96qd08CKRagnQniCpcwfzGDuR/3fyilTFdS8/f0ft95aVGZkoQNuwgpTxs4FtD4jH5Fw==
+
 diff@^4.0.1:
   version "4.0.2"
   resolved "https://registry.npmjs.org/diff/-/diff-4.0.2.tgz#60f3aecb89d5fae520c11aa19efc2bb982aade7d"
@@ -408,6 +427,11 @@ header-case@^1.0.0:
   dependencies:
     no-case "^2.2.0"
     upper-case "^1.1.3"
+
+heap@^0.2.3:
+  version "0.2.7"
+  resolved "https://registry.npmjs.org/heap/-/heap-0.2.7.tgz#1e6adf711d3f27ce35a81fe3b7bd576c2260a8fc"
+  integrity sha512-2bsegYkkHO+h/9MGbn6KWcE45cHZgPANo5LXF7EvWdT0yT2EguSVO1nDgU5c8+ZOPwp2vMNa7YFsJhVcDR9Sdg==
 
 human-signals@^2.1.0:
   version "2.1.0"

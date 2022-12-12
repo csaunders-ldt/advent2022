@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@types/node": "18.0.0",
+    "a-star": "^0.2.0",
     "caller": "^1.1.0",
     "dotenv": "^16.0.3",
     "hygen": "^6.2.11",
