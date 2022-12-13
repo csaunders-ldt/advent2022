@@ -30,6 +30,6 @@ function part2(pairs: Tuple[][][]) {
 const parser = getGridParser({
   separator: '\n\n',
   rowSeparator: '\n',
-  mapFn: (l) => JSON.parse(l),
+  mapFn: JSON.parse,
 });
 solve({ part1, test1: 13, part2, test2: 140, parser });
