@@ -1,4 +1,4 @@
-import { findIndex, isArray, reduce, zip } from 'lodash';
+import { findIndex, isArray, map, reduce, sum, sumBy, zip } from 'lodash';
 import { getGridParser, solve } from '../utils';
 
 type Tuple = number | Tuple[];
@@ -15,11 +15,8 @@ function compare(a?: Tuple, b?: Tuple): number {
 }
 
 function part1(pairs: Tuple[][]) {
-  return reduce(
-    pairs,
-    (acc, [a, b], i) => (compare(a, b) < 0 ? acc + i + 1 : acc),
-    0,
-  );
+  const score = map(pairs, ([l, r], i) => (compare(l, r) < 0 ? i + 1 : 0));
+  return sum(score);
 }
 
 function part2(pairs: Tuple[][][]) {
