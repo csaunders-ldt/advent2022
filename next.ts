@@ -8,6 +8,7 @@ import {
 } from 'fs';
 import { config } from 'dotenv';
 import { map, sortBy } from 'lodash';
+import { env } from 'process';
 config();
 
 const files = readdirSync('.');
@@ -21,6 +22,15 @@ const folder = `day${day}`;
 
 mkdirSync(folder);
 copyFile('_template/index.ts', `${folder}/index.ts`, () => {});
+
+if (env.PYTHON) {
+  copyFile('_template/solve.py', `${folder}/solve.py`, () => {});
+}
+
+if (env.RUBY) {
+  copyFile('_template/solve.rb', `${folder}/solve.rb`, () => {});
+}
+
 writeFileSync(`${folder}/solutions.txt`, '');
 fetch(`https://adventofcode.com/2022/day/${day}/input`, {
   headers: {
