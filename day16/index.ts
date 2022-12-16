@@ -1,7 +1,19 @@
-import { filter, forEach, keys, map, max } from 'lodash';
+import {
+  cloneDeep,
+  filter,
+  forEach,
+  join,
+  keys,
+  map,
+  max,
+  memoize,
+  reverse,
+  sortBy,
+} from 'lodash';
 import { solve } from '../utils';
 
 type Valve = {
+  name: string;
   flowRate: number;
   neighbours: string[];
   distanceTo: Record<string, number>;
@@ -20,10 +32,9 @@ function distance(from: Valve, to: string, valves: Valves): number {
 
 function findDistances(valves: Valves) {
   forEach(keys(valves), (name) => {
-    const valve = valves[name];
-    forEach(keys(valves), (otherName) => {
-      if (name === otherName || valves[otherName].flowRate === 0) return;
-      valve.distanceTo[otherName] = distance(valve, otherName, valves);
+    forEach(keys(valves), (to) => {
+      if (name === to || valves[to].flowRate === 0) return;
+      valves[name].distanceTo[to] = distance(valves[name], to, valves);
     });
   });
 }
@@ -32,7 +43,7 @@ function parser(input: string): Valves {
   const valveByName: Valves = input.split('\n').reduce((acc, line) => {
     const [name, ...neighbours] = [...line.match(/[A-Z]{2}/g)];
     const flowRate = +line.match(/\d+/)[0];
-    return { ...acc, [name]: { flowRate, neighbours, distanceTo: {} } };
+    return { ...acc, [name]: { flowRate, neighbours, distanceTo: {}, name } };
   }, {});
   findDistances(valveByName);
   return valveByName;
@@ -59,68 +70,36 @@ function part1(valves: Valves) {
   return bestPath(valves['AA'], valves, 30);
 }
 
+type Player = {
+  at: Valve;
+  timeLeft: number;
+};
+
 function getElephantScore(
-  youFrom: Valve,
-  eleFrom: Valve,
+  players: [Player, Player],
   valves: Valves,
-  youTimeLeft: number,
-  eleTimeLeft: number,
   seen?: Set<string>,
 ): number {
-  const youOpts = filter(
-    keys(youFrom.distanceTo),
-    (n) => !seen || !seen.has(n),
-  );
-  const eleOpts = filter(
-    keys(eleFrom.distanceTo),
-    (n) => !seen || !seen.has(n),
-  );
-  const youPaths = filter(
-    youOpts,
-    (n) => youFrom.distanceTo[n] + 1 <= youTimeLeft,
-  );
-  const elePaths = filter(
-    eleOpts,
-    (n) => eleFrom.distanceTo[n] + 1 <= eleTimeLeft,
-  );
+  const [{ at, timeLeft }] = players;
+  let opts = filter(keys(at.distanceTo), (n) => !seen || !seen.has(n));
+  let paths = filter(opts, (n) => at.distanceTo[n] + 1 <= timeLeft);
+  const heuristic = (n: string) => valves[n].flowRate / at.distanceTo[n];
+  paths = paths.sort((a, b) => heuristic(b) - heuristic(a)).slice(0, 5);
 
-  const youScores = youPaths.flatMap((n) => {
+  const scores = paths.flatMap((n) => {
     const newSeen = new Set([...(seen ?? []), n]);
-    const timeAfter = youTimeLeft - youFrom.distanceTo[n] - 1;
+    const timeAfter = timeLeft - at.distanceTo[n] - 1;
     const score = valves[n].flowRate * timeAfter;
-    return (
-      getElephantScore(
-        valves[n],
-        eleFrom,
-        valves,
-        timeAfter,
-        eleTimeLeft,
-        newSeen,
-      ) + score
-    );
+    const p2 = { at: valves[n], timeLeft: timeAfter };
+    return getElephantScore([players[1], p2], valves, newSeen) + score;
   });
 
-  const eleScores = elePaths.flatMap((n) => {
-    const newSeen = new Set([...(seen ?? []), n]);
-    const timeAfter = eleTimeLeft - eleFrom.distanceTo[n] - 1;
-    const score = valves[n].flowRate * timeAfter;
-    return (
-      getElephantScore(
-        youFrom,
-        valves[n],
-        valves,
-        youTimeLeft,
-        timeAfter,
-        newSeen,
-      ) + score
-    );
-  });
-
-  return max([...youScores, ...eleScores, 0]);
+  return max([...scores, 0]);
 }
 
 function part2(valves: Valves) {
-  return getElephantScore(valves['AA'], valves['AA'], valves, 26, 26);
+  const player = { at: valves['AA'], timeLeft: 26 };
+  return getElephantScore([player, cloneDeep(player)], valves);
 }
 
 solve({ part1, test1: 1651, part2, test2: 1707, parser });
