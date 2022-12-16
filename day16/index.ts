@@ -58,7 +58,7 @@ function getPath(players: Player[], map: Valves, seen?: Set<string>): number {
     const timeAfter = timeLeft - at.distanceTo[n] - 1;
     const score = map[n].flowRate * timeAfter;
     const p2 = { at: map[n], timeLeft: timeAfter };
-    return getPath([players[1], p2], map, newSeen) + score;
+    return getPath([...players.slice(1), p2], map, newSeen) + score;
   });
 
   return max([...scores, 0]);
