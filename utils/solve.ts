@@ -5,8 +5,8 @@ import caller from 'caller';
 config();
 
 type SolveArgs<T, TResult1, TResult2> = {
-  part1: (input: T) => TResult1;
-  part2: (input: T) => TResult2;
+  part1: (input: T, isTest?: boolean) => TResult1;
+  part2: (input: T, isTest?: boolean) => TResult2;
   test1?: TResult1;
   test2?: TResult2;
   parser: (input: string) => T;
@@ -33,7 +33,7 @@ export async function solve<
 
   if (test) {
     const testInput = parser(read(`${dir}/${testFile}`));
-    const testOutput = solver(testInput)?.toString();
+    const testOutput = solver(testInput, true)?.toString();
     if (testOutput !== test.toString()) {
       console.error(
         `Test failed for day ${day} part ${part}:\nExpected\n${test}\nGot\n${testOutput}\n`,
@@ -45,7 +45,7 @@ export async function solve<
 
   const fileName = `${dir}/${file}`;
   const input = parser(read(fileName));
-  const answer = solver(input)?.toString();
+  const answer = solver(input, false)?.toString();
   console.log(`Attempting ${answer}`);
   const solutions = read(`${dir}/${solutionsFile}`).split('\n');
   if (solutions.includes(answer || '')) {
