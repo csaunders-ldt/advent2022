@@ -1,14 +1,5 @@
-import {
-  entries,
-  filter,
-  forEach,
-  keys,
-  map,
-  max,
-  times,
-  values,
-} from 'lodash';
-import { parseLines, solve } from '../utils';
+import { filter, forEach, map, max, times, values } from 'lodash';
+import { solve } from '../utils';
 
 type Valve = {
   name: string;
@@ -34,7 +25,6 @@ type State = {
   position: Valve;
   activeValves: Valve[];
   flowRate: number;
-  time: number;
 };
 
 function hashState({ activeValves, position }: State): string {
@@ -46,27 +36,22 @@ function nextFlowRate({ flowRate, activeValves }: State) {
 }
 
 function nextState(state: State) {
-  return { ...state, time: state.time + 1, flowRate: nextFlowRate(state) };
+  return { ...state, flowRate: nextFlowRate(state) };
 }
 
 function moves(state: State): State[] {
   const { position, activeValves } = state;
-  const options = position.neighbours.map((v) => ({
-    ...nextState(state),
-    position: v,
-  }));
+  const next = nextState(state);
+  const options = position.neighbours.map((v) => ({ ...next, position: v }));
   if (!activeValves.includes(position) && position.flowRate > 0) {
-    options.push({
-      ...nextState(state),
-      activeValves: [...activeValves, position],
-    });
+    options.push({ ...next, activeValves: [...activeValves, position] });
   }
   return options;
 }
 
 function part1(valves: Record<string, Valve>) {
   const position = valves['AA'];
-  const state: State = { position, activeValves: [], flowRate: 0, time: 0 };
+  const state: State = { position, activeValves: [], flowRate: 0 };
   let states = [state];
   times(30, (i) => {
     const bestState: Record<string, State> = {};
@@ -79,7 +64,6 @@ function part1(valves: Record<string, Valve>) {
       }
     });
     states = values(bestState);
-    console.log(`${i}: ${states.length}`);
   });
   return max(map(states, (s) => s.flowRate));
 }
