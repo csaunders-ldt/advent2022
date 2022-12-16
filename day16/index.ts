@@ -55,7 +55,7 @@ function moves(state: State): State[] {
     ...nextState(state),
     position: v,
   }));
-  if (!activeValves.includes(position)) {
+  if (!activeValves.includes(position) && position.flowRate > 0) {
     options.push({
       ...nextState(state),
       activeValves: [...activeValves, position],
@@ -73,6 +73,7 @@ function part1(valves: Record<string, Valve>) {
     states = states.flatMap(moves);
     forEach(states, (s) => {
       const hash = hashState(s);
+      if (s.flowRate === 0 && i > 8) return;
       if (!bestState[hash] || bestState[hash].flowRate < s.flowRate) {
         bestState[hash] = s;
       }
