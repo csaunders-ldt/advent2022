@@ -3,7 +3,7 @@ from re import match
 from importlib import import_module
 
 files = glob('day*/solve.py')
-files.sort(key=lambda f: match(r'day(\d+)[\\\/]*solve.py', f).group(1))
+files.sort(key=lambda f: int(match(r'day(\d+)[\\\/]*solve.py', f).group(1)), reverse=True)
 module = import_module(files[0][:-3].replace('\\', '.').replace('/', '.'))
 
 part1Answer = open(files[0][:-8] + 'solutions.txt').read().splitlines()[-1]
