@@ -9,7 +9,8 @@
   "private": false,
   "scripts": {
     "next": "ts-node ./next.ts",
-    "start": "ts-node ./index.ts"
+    "start": "ts-node ./index.ts",
+    "python": "python3 ./advent.py"
   },
   "dependencies": {
     "@types/node": "18.0.0",
