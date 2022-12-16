@@ -1,4 +1,13 @@
-import { filter, forEach, map, max, times } from 'lodash';
+import {
+  entries,
+  filter,
+  forEach,
+  keys,
+  map,
+  max,
+  times,
+  values,
+} from 'lodash';
 import { parseLines, solve } from '../utils';
 
 type Valve = {
@@ -28,8 +37,8 @@ type State = {
   time: number;
 };
 
-function hashState({ activeValves, position, flowRate, time }: State): string {
-  return activeValves.sort().join('') + position.name + flowRate + time;
+function hashState({ activeValves, position }: State): string {
+  return `${activeValves.map((v) => v.name).sort()}${position.name}`;
 }
 
 function nextFlowRate({ flowRate, activeValves }: State) {
@@ -59,9 +68,17 @@ function part1(valves: Record<string, Valve>) {
   const position = valves['AA'];
   const state: State = { position, activeValves: [], flowRate: 0, time: 0 };
   let states = [state];
-  times(30, () => {
+  times(30, (i) => {
+    const bestState: Record<string, State> = {};
     states = states.flatMap(moves);
-    console.log(states.length);
+    forEach(states, (s) => {
+      const hash = hashState(s);
+      if (!bestState[hash] || bestState[hash].flowRate < s.flowRate) {
+        bestState[hash] = s;
+      }
+    });
+    states = values(bestState);
+    console.log(`${i}: ${states.length}`);
   });
   return max(map(states, (s) => s.flowRate));
 }
