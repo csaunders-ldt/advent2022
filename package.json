@@ -10,7 +10,8 @@
   "scripts": {
     "next": "ts-node ./next.ts",
     "start": "ts-node ./index.ts",
-    "python": "python3 ./advent.py"
+    "python": "python3 ./advent.py",
+    "ruby": "ruby ./advent.rb"
   },
   "dependencies": {
     "@types/node": "18.0.0",
