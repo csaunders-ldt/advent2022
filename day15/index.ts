@@ -1,61 +1,57 @@
-import { filter, flatten, map, reduce, sortBy, split } from 'lodash';
+import { every, find, flatten, map, range, split, uniq } from 'lodash';
 import { solve } from '../utils';
 
 type Position = [x: number, y: number];
-type Sensor = [startX: number, endX: number];
-type Data = { sensors: Sensor[]; beaconCount: number };
+type Sensor = { center: Position; beacon: Position; width: number };
 
-function manhattanDistance([x1, y1]: Position, [x2, y2]: Position) {
-  return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+function manhattanDistance([x, y]: Position, [x2, y2]: Position) {
+  return Math.abs(x - x2) + Math.abs(y - y2);
 }
 
-function parser(input: string): Data {
-  const targetY = input.split('\n').length < 100 ? 10 : 2000000;
-  const beacons = new Set<string>();
-  const maybeSensors = map(split(input, '\n'), (line) => {
-    const [x, y, beaconX, beaconY] = [...line.match(/\d+/g)].map(Number);
-    if (beaconY === targetY) beacons.add(`${beaconX},${beaconY}`);
+function parser(input: string): Sensor[] {
+  return map(split(input, '\n'), (line) => {
+    const [x, y, beaconX, beaconY] = [...line.match(/-?\d+/g)].map(Number);
     const width = manhattanDistance([x, y], [beaconX, beaconY]);
-    const diff = width - Math.abs(y - targetY);
-    return diff > 0 ? [x - diff, x + diff] : undefined;
+    return { center: [x, y], beacon: [beaconX, beaconY], width };
   });
-  const sensors = filter(maybeSensors, (b) => b !== undefined) as Sensor[];
-  return { sensors, beaconCount: beacons.size };
 }
 
-function netflix(sensors: Sensor[]) {
-  const points = map(sensors, ([startX, endX]) => [
-    { pos: startX, isStart: true },
-    { pos: endX, isStart: false },
-  ]);
-  const sortedPoints = sortBy(flatten(points), [
-    ({ pos }) => pos,
-    ({ isStart }) => (isStart ? 1 : -1),
-  ]);
-  console.log(sortedPoints);
-  return reduce(
-    sortedPoints,
-    ({ count, active, lastPos }, { pos, isStart }) => {
-      if (isStart && active === 0) {
-        console.log(lastPos);
-        lastPos = pos;
-      }
-      if (!isStart && active === 0) {
-        count += pos - lastPos;
-      }
-      return { lastPos, count, active };
-    },
-    { count: 0, active: 0, lastPos: 0 },
-  ).count;
+function part1(sensors: Sensor[], isTest: boolean) {
+  const targetY = isTest ? 10 : 2000000;
+  const overlappingBeacons = new Set<number>();
+  const points = map(sensors, ({ center: [x, y], beacon, width }) => {
+    if (beacon[1] === targetY) overlappingBeacons.add(beacon[0]);
+
+    const yWidth = width - Math.abs(y - targetY);
+    return yWidth < 0 ? [] : range(x - yWidth, x + yWidth + 1);
+  });
+  return uniq(flatten(points)).length - overlappingBeacons.size;
 }
 
-function part1({ sensors, beaconCount }: Data) {
-  console.log(sensors);
-  return netflix(sensors);
+function contains([posX, posY]: Position, { center: [x, y], width }: Sensor) {
+  return manhattanDistance([posX, posY], [x, y]) <= width;
 }
 
-function part2({ sensors, beaconCount }: Data) {
-  return 'part2';
+function part2(sensors: Sensor[], isTest: boolean) {
+  const limit = isTest ? 20 : 4000000;
+  const withinLimit = ([x, y]: Position) =>
+    x >= 0 && y >= 0 && x <= limit && y <= limit;
+
+  for (let { center, width } of sensors) {
+    const [x, y] = center;
+    const points = map(range(width + 2), (i) => [
+      [x + i, y - width + i - 1],
+      [x + i, y + width - i + 1],
+      [x - i, y - width + i - 1],
+      [x - i, y + width - i + 1],
+    ]) as Position[][];
+    const point = find(
+      flatten(points),
+      (p) => every(sensors, (s) => !contains(p, s)) && withinLimit(p),
+    );
+    if (point) return point[0] * 4000000 + point[1];
+  }
+  throw new Error('No point found');
 }
 
-solve({ part1, test1: 26, part2, parser });
+solve({ part1, test1: 26, part2, test2: 56000011, parser });
