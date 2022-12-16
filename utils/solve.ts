@@ -66,7 +66,7 @@ export async function solve<
   );
   const body = await result.text();
   if (body.includes('not the right answer')) {
-    console.log('Wrong answer!');
+    console.log(`Wrong answer\n${body}`);
   } else {
     console.log('Correct answer!');
     if (part === 2) return;
