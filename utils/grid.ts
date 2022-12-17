@@ -10,7 +10,7 @@ import {
 } from 'lodash';
 
 export function printGrid(grid: string[][]) {
-  console.log(grid.map((row) => row.join('')).join('\n'));
+  console.log(grid.map((row) => row.join('')).join('\n') + '\n');
 }
 
 export type Point = [x: number, y: number];

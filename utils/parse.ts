@@ -23,4 +23,4 @@ export function getGridParser<T>(opts?: GridParserOptions<T>) {
   };
 }
 
-export const parseGrid = getGridParser();
+export const parseGrid = getGridParser<string>();
