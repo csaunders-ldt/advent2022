@@ -10,8 +10,6 @@
   "scripts": {
     "next": "ts-node ./next.ts",
     "start": "ts-node ./index.ts",
-    "start:fast": "node ./dist/index.js",
-    "build": "tsc",
     "python": "python3 ./advent.py",
     "ruby": "ruby ./advent.rb"
   },
