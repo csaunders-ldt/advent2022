@@ -40,7 +40,6 @@ function floodFill(todo: Set<string>, seen: Set<string>, blocks: Set<string>) {
 
 function part2(points: Set<string>) {
   const seenSet = floodFill(new Set(['-1,-1,-1']), new Set(), points);
-  const hiddenPoints = filter([...points], (p) => !seenSet.has(p));
   const isPoint = (n) => seenSet.has(n.toString()) && !points.has(n.toString());
   const sides = (p: string) => filter(neighbours(p), isPoint).length;
   return sum(map([...points], sides));
