@@ -1,5 +1,5 @@
 import { findIndex, forEach, map, split, sum, times, values } from 'lodash';
-import { parseLines, solve } from '../utils';
+import { solve } from '../utils';
 
 type Value = { value: number };
 function parser(input: string) {
