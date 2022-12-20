@@ -1,5 +1,6 @@
 import {
   cloneDeep,
+  countBy,
   every,
   filter,
   flatMap,
@@ -20,29 +21,16 @@ function parser(input: string): Point[] {
 }
 function neighbours(axis: Point): Point[] {
   return flatMap(axis, (dim, i) => [
-    [...axis].splice(1, i, dim - 1),
-    [...axis].splice(1, i, dim + 1),
+    [...axis.slice(0, i), dim - 1, ...axis.slice(i + 1)],
+    [...axis.slice(0, i), dim + 1, ...axis.slice(i + 1)],
   ]) as Point[];
 }
 
 function part1(points: Point[]) {
   const names = new Set(map(points, String));
-  const byString = keyBy(points, String);
-  const shared = filter(flatMap(points, neighbours), (v) =>
-    names.has(v.toString()),
-  );
-
-  const withNeighbours = map(points, (point) => ({ point, neighbours: [] }));
-  forEach(withNeighbours, (point) => {
-    forEach(neighbours(point.point), (neighbour) => {
-      const neighbourPoint = byString[neighbour.toString()];
-      if (neighbourPoint) {
-        point.neighbours.push(neighbour);
-      }
-    });
-  });
-  const score = map(withNeighbours, (point) => 6 - point.neighbours.length);
-
+  const exists = (v: Point) => names.has(v.toString());
+  const faces = (point: Point) => 6 - filter(neighbours(point), exists).length;
+  const score = map(points, faces);
   return sum(score);
 }
 
@@ -94,4 +82,4 @@ function part2(points: Point[]) {
   return sum(score) - 6 * unseen;
 }
 
-solve({ part1, test1: 64, part2, test2: 58, parser });
+solve({ part1, test1: 66, part2, test2: 58, parser });
