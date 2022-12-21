@@ -32,13 +32,14 @@ function part2(instructions: string[]) {
   };
 
   let guess = 0n;
+  const isNegative = test(0n) < 0;
   forEach(range(61, 0), (i) => {
     const mask = 1n << BigInt(i);
-    if (test(guess | mask) > 0) {
+    if (test(guess | mask) < 0 === isNegative) {
       guess |= mask;
     }
   });
-  return Number(guess) + 1;
+  return Number(guess) + (isNegative ? 1 : 0);
 }
 
 solve({ part1, test1: 152, part2, test2: 301, parser });
