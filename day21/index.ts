@@ -1,5 +1,5 @@
-import { flatMap, forEach, map, minBy, range } from 'lodash';
-import { parseLines, solve } from '../utils';
+import { forEach, range } from 'lodash';
+import { solve } from '../utils';
 
 function parser(input: string) {
   return input.replace(/:/g, '=').split('\n');
