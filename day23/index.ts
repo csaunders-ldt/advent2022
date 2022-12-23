@@ -14,18 +14,13 @@ import {
 import { solve } from '../utils';
 
 type Point = [x: number, y: number];
-type State = {
-  grid: string[][];
-  elves: Point[];
-};
 
-function parser(input: string) {
+function parser(input: string): Point[] {
   const grid = map(split(input, '\n'), (l) => split(l, ''));
   const maybeElves = flatMap(grid, (row, y) =>
     map(row, (cell, x) => (cell === '#' ? [x, y] : undefined)),
   );
-  const elves = filter(maybeElves, (e) => e !== undefined);
-  return { grid, elves };
+  return filter(maybeElves, (e) => e !== undefined) as Point[];
 }
 
 type Move = { center: Point; left: Point; right: Point };
@@ -58,25 +53,24 @@ function nextPosition(elf: Point, elves: Set<string>, i = 0) {
   return next[0];
 }
 
-function nextState({ elves, grid }: State, i: number) {
+function nextState(elves: Point[], i: number) {
   const elfHash = new Set(map(elves, String));
   const proposedNext = map(elves, (elf) => nextPosition(elf, elfHash, i));
   const counts = countBy(proposedNext, String);
-  elves = map(proposedNext, (e, i) => (counts[String(e)] === 1 ? e : elves[i]));
-  return { elves, grid };
+  return map(proposedNext, (e, i) => (counts[String(e)] === 1 ? e : elves[i]));
 }
 
-function part1(state: State) {
-  times(10, (i) => (state = nextState(state, i)));
-  const [x, y] = zip(...state.elves);
-  return (max(x) - min(x) + 1) * (max(y) - min(y) + 1) - state.elves.length;
+function part1(elves: Point[]) {
+  times(10, (i) => (elves = nextState(elves, i)));
+  const [x, y] = zip(...elves);
+  return (max(x) - min(x) + 1) * (max(y) - min(y) + 1) - elves.length;
 }
 
-function part2(state: State) {
+function part2(elves: Point[]) {
   for (let i = 0; i < 1000000000; i++) {
-    const hash = join(state.elves, ',');
-    state = nextState(state, i);
-    if (hash === join(state.elves, ',')) return i + 1;
+    const hash = join(elves, ',');
+    elves = nextState(elves, i);
+    if (hash === join(elves, ',')) return i + 1;
   }
   return -1;
 }
