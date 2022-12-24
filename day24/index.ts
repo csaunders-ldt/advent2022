@@ -72,7 +72,8 @@ function pointsAround([x, y]: Point, height: number, width: number) {
     opts,
     ([x, y]) =>
       (x >= 0 && y >= 0 && x < width && y < height) ||
-      (x === width - 1 && y === height),
+      (x === width - 1 && y === height) ||
+      (x === 0 && y === -1),
   );
 }
 
@@ -88,11 +89,11 @@ function getSiblings(
   return map(points, ([x, y]) => [x, y, time + 1]);
 }
 
-function timeTaken(grid: Grid, states: State[], end: Point, start = 0) {
+function timeTaken(grid: Grid, states: State[], end: Point) {
   const grids = map(range(1000), (time) => getGridAt(grid, time + 1).hash);
   const siblings = partial(getSiblings, grids, grid.width, grid.height);
 
-  for (let time = start; time < 1000; time++) {
+  for (let time = 0; time < 1000; time++) {
     states = uniqBy(flatMap(states, siblings), String);
     if (find(states, ([x, y]) => x == end[0] && y === end[1])) return time + 1;
   }
@@ -100,15 +101,14 @@ function timeTaken(grid: Grid, states: State[], end: Point, start = 0) {
 }
 
 function part1(grid: Grid) {
-  return timeTaken(grid, [[0, -1, 0]], [grid.width - 1, grid.height], 0);
+  return timeTaken(grid, [[0, -1, 0]], [grid.width - 1, grid.height]);
 }
 
 function part2(grid: Grid) {
   const end: Point = [grid.width - 1, grid.height];
   const there = timeTaken(grid, [[0, -1, 0]], end);
-  console.log(there);
-  const back = timeTaken(grid, [[...end, 0]], [0, -1], there);
-  return timeTaken(grid, [[0, -1, 0]], end, there + back);
+  const backAgain = timeTaken(grid, [[...end, there]], [0, -1]);
+  return there + backAgain + timeTaken(grid, [[0, -1, there + backAgain]], end);
 }
 
 solve({ part1, test1: 18, part2, test2: 54, parser });
