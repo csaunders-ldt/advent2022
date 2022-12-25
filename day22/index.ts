@@ -39,10 +39,6 @@ function parser(input: string): Input {
 function move(state: State, distance: number): State {
   if (distance === 0) return state;
   const next = state.cell.next[state.facing];
-  if (next.facing !== state.facing) {
-    console.log(state.cell.next);
-    console.log(`turning ${state.facing} to ${next.facing}`);
-  }
   return next.cell.isFilled ? state : move(next, distance - 1);
 }
 
@@ -53,9 +49,6 @@ function execute(input: Input, state: State) {
       return;
     }
     state = mapValues(move(state, +instruction), clone) as State;
-    console.log(state.cell.x, state.cell.y, state.facing);
-
-    // console.log(state);
   });
   return (state.cell.y + 1) * 1000 + (state.cell.x + 1) * 4 + state.facing;
 }
@@ -84,38 +77,18 @@ function isCorner({ next }: Cell, i: number, j: number) {
   return next[i] && !next[i].cell.next[j] && next[j] && !next[j].cell.next[i];
 }
 
-function attach(l: Cell, r: Cell, lFacing: number, rFacing: number, depth = 6) {
-  if (depth === 0) {
-    console.log('2deep');
-    return;
-  }
-  // if (
-  //   r.next[(lFacing + 1) % 4] &&
-  //   l.next[(rFacing + 3) % 4] &&
-  //   r.next[lFacing] &&
-  //   l.next[rFacing]
-  // ) {
-  //   console.log('already attached');
-  //   return;
-  // }
-  // console.log(`Folding ${l.x}, ${l.y} and ${r.x}, ${r.y}`);
+function attach(l: Cell, r: Cell, lFacing: number, rFacing: number) {
   l.next[(lFacing + 1) % 4] = { cell: r, facing: (rFacing + 1) % 4 };
   r.next[(rFacing + 3) % 4] = { cell: l, facing: (lFacing + 3) % 4 };
 
   if (!l.next[lFacing]) {
     if (!r.next[rFacing]) return;
-    console.log('rotating left');
     lFacing = (lFacing + 3) % 4;
-    depth--;
-    console.log(depth);
   } else {
     l = l.next[lFacing].cell;
   }
   if (!r.next[rFacing]) {
-    console.log('rotating right');
     rFacing = (rFacing + 1) % 4;
-    depth--;
-    console.log(depth);
   } else {
     r = r.next[rFacing].cell;
   }
@@ -127,20 +100,16 @@ function attach(l: Cell, r: Cell, lFacing: number, rFacing: number, depth = 6) {
   ) {
     return;
   }
-  attach(l, r, lFacing, rFacing, depth);
+  attach(l, r, lFacing, rFacing);
 }
 
 function fold(cell: Cell) {
   let lFacing = find(range(4), (i) => isCorner(cell, i, (i + 1) % 4));
 
-  if (cell.x === 49 && cell.y === 149) console.log({ lFacing });
-
   if (lFacing === undefined) return;
 
-  console.log(`folding ${cell.x}, ${cell.y}`);
   let rFacing = (lFacing + 1) % 4;
   attach(cell.next[lFacing].cell, cell.next[rFacing].cell, lFacing, rFacing);
-  console.log('done');
 }
 
 function makeLoopSimple({ cells }: Input) {
@@ -167,10 +136,8 @@ function makeLoopSimple({ cells }: Input) {
 }
 
 function wrap({ cells, ...rest }: Input) {
-  // Assuming top left is a gap.
   makeLoopSimple({ cells, ...rest }); // Good place to start;
   forEach(cells, (cell) => fold(cell));
-  // times(1, () => forEach(filter(cells, isFold), fold));
 }
 
 function part2(input: Input) {
