@@ -1,4 +1,5 @@
 import {
+  clone,
   filter,
   find,
   findIndex,
@@ -6,10 +7,9 @@ import {
   forEach,
   groupBy,
   map,
-  partial,
+  mapValues,
   range,
   split,
-  times,
 } from 'lodash';
 import { solve } from '../utils';
 
@@ -39,17 +39,21 @@ function parser(input: string): Input {
 function move(state: State, distance: number): State {
   if (distance === 0) return state;
   const next = state.cell.next[state.facing];
-  // console.log([state.cell.x, state.cell.y]);
+  if (next.facing !== state.facing) {
+    console.log(state.cell.next);
+    console.log(`turning ${state.facing} to ${next.facing}`);
+  }
   return next.cell.isFilled ? state : move(next, distance - 1);
 }
 
 function execute(input: Input, state: State) {
-  forEach(input.instructions, (instruction) => {
+  forEach(input.instructions, (instruction, i) => {
     if (instruction === 'L' || instruction === 'R') {
       state.facing = (state.facing + (instruction === 'L' ? -1 : 1) + 4) % 4;
       return;
     }
-    state = move(state, +instruction);
+    state = mapValues(move(state, +instruction), clone) as State;
+    console.log(state.cell.x, state.cell.y, state.facing);
 
     // console.log(state);
   });
@@ -85,6 +89,15 @@ function attach(l: Cell, r: Cell, lFacing: number, rFacing: number, depth = 6) {
     console.log('2deep');
     return;
   }
+  // if (
+  //   r.next[(lFacing + 1) % 4] &&
+  //   l.next[(rFacing + 3) % 4] &&
+  //   r.next[lFacing] &&
+  //   l.next[rFacing]
+  // ) {
+  //   console.log('already attached');
+  //   return;
+  // }
   // console.log(`Folding ${l.x}, ${l.y} and ${r.x}, ${r.y}`);
   l.next[(lFacing + 1) % 4] = { cell: r, facing: (rFacing + 1) % 4 };
   r.next[(rFacing + 3) % 4] = { cell: l, facing: (lFacing + 3) % 4 };
@@ -113,15 +126,16 @@ function attach(l: Cell, r: Cell, lFacing: number, rFacing: number, depth = 6) {
     filter(r.next, (v) => v).length === 4
   ) {
     return;
-    console.log(`Failed to fold ${l.x}, ${l.y} and ${r.x}, ${r.y}`);
-    process.exit(1);
   }
   attach(l, r, lFacing, rFacing, depth);
 }
 
 function fold(cell: Cell) {
   let lFacing = find(range(4), (i) => isCorner(cell, i, (i + 1) % 4));
-  if (!lFacing) return;
+
+  if (cell.x === 49 && cell.y === 149) console.log({ lFacing });
+
+  if (lFacing === undefined) return;
 
   console.log(`folding ${cell.x}, ${cell.y}`);
   let rFacing = (lFacing + 1) % 4;
